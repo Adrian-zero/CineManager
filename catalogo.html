@@ -314,6 +314,9 @@
         let currentView = 'grid';
         let filteredMovies = [];
 
+        // Cargar favoritos desde localStorage
+        let favoriteMovies = JSON.parse(localStorage.getItem('favoriteMovies') || '[]');
+
         document.addEventListener('DOMContentLoaded', function() {
             movies = JSON.parse(localStorage.getItem('movies') || '[]');
             filteredMovies = [...movies];
@@ -339,6 +342,7 @@
             const col = document.createElement('div');
             col.className = currentView === 'grid' ? 'col-md-6 col-lg-4 mb-4' : 'col-12 mb-4';
             const posterUrl = movie.poster && movie.poster.trim() !== '' ? movie.poster : 'img/placeholder_poster.png';
+            const favActive = isFavorite(movie.id) ? 'active text-danger' : '';
             col.innerHTML = `
                 <div class="card movie-card h-100">
                     <div class="position-relative">
@@ -346,8 +350,8 @@
                         <div class="movie-rating">
                             <i class="bi bi-star-fill text-warning me-1"></i>${movie.rating}
                         </div>
-                        <button class="favorite-btn" onclick="toggleFavorite(${movie.id})" id="fav-${movie.id}">
-                            <i class="bi bi-heart"></i>
+                        <button class="favorite-btn ${favActive}" onclick="toggleFavorite(${movie.id})" id="fav-${movie.id}">
+                            <i class="bi bi-heart${isFavorite(movie.id) ? '-fill' : ''}"></i>
                         </button>
                     </div>
                     <div class="card-body">
@@ -424,21 +428,20 @@
 
         // Toggle favorite
         function toggleFavorite(movieId) {
-            const btn = document.getElementById(`fav-${movieId}`);
             const movie = movies.find(m => m.id === movieId);
-            const isFavorite = btn.classList.contains('active');
-            
-            btn.classList.toggle('active');
-            
-            if (btn.classList.contains('active')) {
+            if (!movie) return;
+            const favIndex = favoriteMovies.findIndex(m => m.id === movieId);
+            if (favIndex === -1) {
                 // Agregar a favoritos
+                favoriteMovies.push(movie);
+                localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
                 Swal.fire({
                     title: '¡Agregada a favoritos!',
                     text: `${movie.title} ha sido agregada a tus favoritos`,
                     icon: 'success',
                     confirmButtonText: '¡Genial!',
                     confirmButtonColor: '#dc3545',
-                    timer: 2000,
+                    timer: 1500,
                     timerProgressBar: true,
                     toast: true,
                     position: 'top-end',
@@ -446,19 +449,22 @@
                 });
             } else {
                 // Remover de favoritos
+                favoriteMovies.splice(favIndex, 1);
+                localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
                 Swal.fire({
                     title: 'Removida de favoritos',
                     text: `${movie.title} ha sido removida de tus favoritos`,
                     icon: 'info',
                     confirmButtonText: 'Entendido',
                     confirmButtonColor: '#6c757d',
-                    timer: 2000,
+                    timer: 1500,
                     timerProgressBar: true,
                     toast: true,
                     position: 'top-end',
                     showConfirmButton: false
                 });
             }
+            displayMovies();
         }
 
         // View movie details
@@ -495,6 +501,10 @@
                 searchMovies();
             }
         });
+
+        function isFavorite(movieId) {
+            return favoriteMovies.some(m => m.id === movieId);
+        }
     </script>
 </body>
 </html> 

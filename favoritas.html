@@ -226,8 +226,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
-        // Sample favorite movies data (in real app, this would come from user's account)
-        let favoriteMovies = [];
+        let favoriteMovies = JSON.parse(localStorage.getItem('favoriteMovies') || '[]');
 
         let currentView = 'grid';
 
@@ -239,24 +238,19 @@
         // Load favorite movies
         function loadFavorites() {
             const favoritesGrid = document.getElementById('favoritesGrid');
-            const emptyState = document.getElementById('emptyState');
             const favoritesCount = document.getElementById('favoritesCount');
-            
-            favoritesCount.textContent = favoriteMovies.length;
-            
+            const emptyState = document.getElementById('emptyState');
+            favoritesGrid.innerHTML = '';
             if (favoriteMovies.length === 0) {
-                favoritesGrid.style.display = 'none';
                 emptyState.style.display = 'block';
+                favoritesCount.textContent = '0';
                 return;
             }
-            
-            favoritesGrid.style.display = 'flex';
             emptyState.style.display = 'none';
-            favoritesGrid.innerHTML = '';
-
+            favoritesCount.textContent = favoriteMovies.length;
             favoriteMovies.forEach(movie => {
-                const movieCard = createFavoriteCard(movie);
-                favoritesGrid.appendChild(movieCard);
+                const col = createFavoriteCard(movie);
+                favoritesGrid.appendChild(col);
             });
         }
 
@@ -264,15 +258,15 @@
         function createFavoriteCard(movie) {
             const col = document.createElement('div');
             col.className = currentView === 'grid' ? 'col-md-6 col-lg-4 mb-4' : 'col-12 mb-4';
-            
+            const posterUrl = movie.poster && movie.poster.trim() !== '' ? movie.poster : 'img/placeholder_poster.png';
             col.innerHTML = `
                 <div class="card movie-card h-100">
                     <div class="position-relative">
-                        <img src="${movie.poster}" class="movie-poster" alt="${movie.title}">
+                        <img src="${posterUrl}" class="movie-poster" alt="${movie.title}">
                         <div class="movie-rating">
                             <i class="bi bi-star-fill text-warning me-1"></i>${movie.rating}
                         </div>
-                        <button class="favorite-btn" onclick="removeFromFavorites(${movie.id})" title="Remover de favoritos">
+                        <button class="favorite-btn active text-danger" onclick="removeFromFavorites(${movie.id})" id="fav-${movie.id}">
                             <i class="bi bi-heart-fill"></i>
                         </button>
                     </div>
@@ -317,8 +311,9 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     favoriteMovies = favoriteMovies.filter(m => m.id !== movieId);
+                    localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
                     loadFavorites();
-                    
+                    if (window.displayMovies) window.displayMovies();
                     Swal.fire({
                         title: '¡Removida!',
                         text: `${movie.title} ha sido removida de tus favoritos`,
@@ -367,12 +362,14 @@
         // Sort by rating
         function sortByRating() {
             favoriteMovies.sort((a, b) => b.rating - a.rating);
+            localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
             loadFavorites();
         }
 
         // Sort by title
         function sortByTitle() {
             favoriteMovies.sort((a, b) => a.title.localeCompare(b.title));
+            localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
             loadFavorites();
         }
 
@@ -391,51 +388,6 @@
                 day: 'numeric'
             });
         }
-
-        // Add sample favorites for demo
-        function addSampleFavorites() {
-            if (favoriteMovies.length === 0) {
-                favoriteMovies = [
-                    {
-                        id: 1,
-                        title: "Inception",
-                        director: "Christopher Nolan",
-                        year: 2010,
-                        genre: ["Ciencia Ficción", "Acción", "Drama"],
-                        rating: 8.8,
-                        poster: "https://images.unsplash.com/photo-1624138784729-537a58f3b0ee?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        description: "Un ladrón experto en el arte de la extracción roba información valiosa de las mentes de las personas mientras sueñan.",
-                        addedDate: "2024-01-15"
-                    },
-                    {
-                        id: 2,
-                        title: "The Shawshank Redemption",
-                        director: "Frank Darabont",
-                        year: 1994,
-                        genre: ["Drama"],
-                        rating: 9.3,
-                        poster: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        description: "Dos hombres encarcelados se unen durante varios años, encontrando consuelo y eventual redención a través de actos de decencia común.",
-                        addedDate: "2024-01-10"
-                    },
-                    {
-                        id: 3,
-                        title: "The Dark Knight",
-                        director: "Christopher Nolan",
-                        year: 2008,
-                        genre: ["Acción", "Drama", "Crimen"],
-                        rating: 9.0,
-                        poster: "https://images.unsplash.com/photo-1531259683001-31fb624c2ddc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        description: "Batman se enfrenta al Joker, un criminal psicópata que busca sumir Gotham City en el caos.",
-                        addedDate: "2024-01-05"
-                    }
-                ];
-                loadFavorites();
-            }
-        }
-
-        // Add sample data for demo (you can remove this in production)
-        addSampleFavorites();
     </script>
 </body>
 </html> 
