@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrediCoppel - Historial</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1000px;
+            margin-top: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .btn-coppel {
+            background-color: #003366;
+            color: white;
+        }
+        .btn-coppel:hover {
+            background-color: #002244;
+            color: white;
+        }
+        .history-card {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+        }
+        .history-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .status-badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .filters-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand m-auto" href="index.html">
+                <img src="img/cecyto.jpg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+                CrediCoppel
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>Historial de Cálculos</h2>
+                <p class="text-muted">Revisa tus cálculos anteriores y cotizaciones</p>
+            </div>
+            <a href="coopel/index.html" class="btn btn-coppel">
+                <i class="fas fa-plus me-2"></i>Nuevo Cálculo
+            </a>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="filterProduct" class="form-label">Producto</label>
+                    <select class="form-select" id="filterProduct">
+                        <option value="">Todos los productos</option>
+                        <option value="tv">Televisor</option>
+                        <option value="comedor">Comedor</option>
+                        <option value="lavadora">Lavadora</option>
+                        <option value="moto">Motocicleta</option>
+                        <option value="sala">Sala</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="filterDate" class="form-label">Fecha</label>
+                    <select class="form-select" id="filterDate">
+                        <option value="">Todas las fechas</option>
+                        <option value="today">Hoy</option>
+                        <option value="week">Esta semana</option>
+                        <option value="month">Este mes</option>
+                        <option value="year">Este año</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="filterPlazo" class="form-label">Plazo</label>
+                    <select class="form-select" id="filterPlazo">
+                        <option value="">Todos los plazos</option>
+                        <option value="6">6 meses</option>
+                        <option value="12">12 meses</option>
+                        <option value="18">18 meses</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                        <i class="fas fa-times me-2"></i>Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial de cálculos -->
+        <div id="historyList">
+            <!-- Cálculo 1 -->
+            <div class="history-card">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Televisor" class="product-image">
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="mb-1">Televisor Samsung 55"</h6>
+                        <p class="text-muted mb-1">Cantidad: 1</p>
+                        <p class="text-muted mb-0">Fecha: 20/12/2024 14:30</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Precio:</small>
+                                <p class="mb-0 fw-bold">$10,000</p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Plazo:</small>
+                                <p class="mb-0 fw-bold">12 meses</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-end">
+                            <p class="mb-1 fw-bold text-primary">$958.33</p>
+                            <small class="text-muted">mensual</small>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="text-end">
+                            <span class="status-badge status-completed">Completado</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button class="btn btn-sm btn-outline-primary me-2" onclick="viewDetails(1)">
+                            <i class="fas fa-eye me-1"></i>Ver Detalles
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" onclick="duplicateCalculation(1)">
+                            <i class="fas fa-copy me-1"></i>Duplicar
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCalculation(1)">
+                            <i class="fas fa-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cálculo 2 -->
+            <div class="history-card">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <img src="https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Lavadora" class="product-image">
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="mb-1">Lavadora LG 20kg</h6>
+                        <p class="text-muted mb-1">Cantidad: 1</p>
+                        <p class="text-muted mb-0">Fecha: 19/12/2024 16:45</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Precio:</small>
+                                <p class="mb-0 fw-bold">$18,000</p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Plazo:</small>
+                                <p class="mb-0 fw-bold">6 meses</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-end">
+                            <p class="mb-1 fw-bold text-primary">$3,300.00</p>
+                            <small class="text-muted">mensual</small>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="text-end">
+                            <span class="status-badge status-pending">Pendiente</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button class="btn btn-sm btn-outline-primary me-2" onclick="viewDetails(2)">
+                            <i class="fas fa-eye me-1"></i>Ver Detalles
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" onclick="duplicateCalculation(2)">
+                            <i class="fas fa-copy me-1"></i>Duplicar
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCalculation(2)">
+                            <i class="fas fa-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cálculo 3 -->
+            <div class="history-card">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Motocicleta" class="product-image">
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="mb-1">Motocicleta Honda 150cc</h6>
+                        <p class="text-muted mb-1">Cantidad: 1</p>
+                        <p class="text-muted mb-0">Fecha: 15/12/2024 10:15</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Precio:</small>
+                                <p class="mb-0 fw-bold">$30,000</p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Plazo:</small>
+                                <p class="mb-0 fw-bold">18 meses</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="text-end">
+                            <p class="mb-1 fw-bold text-primary">$2,000.00</p>
+                            <small class="text-muted">mensual</small>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="text-end">
+                            <span class="status-badge status-completed">Completado</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button class="btn btn-sm btn-outline-primary me-2" onclick="viewDetails(3)">
+                            <i class="fas fa-eye me-1"></i>Ver Detalles
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary me-2" onclick="duplicateCalculation(3)">
+                            <i class="fas fa-copy me-1"></i>Duplicar
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCalculation(3)">
+                            <i class="fas fa-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paginación -->
+        <nav aria-label="Navegación de páginas" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="text-center mt-4">
+            <a href="dashboard.html" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script>
+        // Función para limpiar filtros
+        function clearFilters() {
+            document.getElementById('filterProduct').value = '';
+            document.getElementById('filterDate').value = '';
+            document.getElementById('filterPlazo').value = '';
+            // Aquí podrías recargar la lista sin filtros
+            console.log('Filtros limpiados');
+        }
+
+        // Función para ver detalles de un cálculo
+        function viewDetails(calculationId) {
+            alert(`Viendo detalles del cálculo #${calculationId}`);
+            // Aquí podrías abrir un modal o redirigir a una página de detalles
+        }
+
+        // Función para duplicar un cálculo
+        function duplicateCalculation(calculationId) {
+            if (confirm('¿Deseas duplicar este cálculo?')) {
+                alert(`Cálculo #${calculationId} duplicado. Redirigiendo a la calculadora...`);
+                window.location.href = 'coopel/index.html';
+            }
+        }
+
+        // Función para eliminar un cálculo
+        function deleteCalculation(calculationId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este cálculo? Esta acción no se puede deshacer.')) {
+                // Aquí podrías eliminar el elemento del DOM o hacer una petición al servidor
+                const card = event.target.closest('.history-card');
+                card.style.opacity = '0.5';
+                setTimeout(() => {
+                    card.remove();
+                }, 300);
+                alert(`Cálculo #${calculationId} eliminado`);
+            }
+        }
+
+        // Aplicar filtros
+        document.getElementById('filterProduct').addEventListener('change', applyFilters);
+        document.getElementById('filterDate').addEventListener('change', applyFilters);
+        document.getElementById('filterPlazo').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            const product = document.getElementById('filterProduct').value;
+            const date = document.getElementById('filterDate').value;
+            const plazo = document.getElementById('filterPlazo').value;
+
+            console.log('Aplicando filtros:', { product, date, plazo });
+            // Aquí podrías filtrar la lista de cálculos
+        }
+
+        // Cargar datos del historial
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Historial cargado');
+            // Aquí podrías cargar datos reales desde localStorage o una API
+        });
+    </script>
+</body>
+</html> 

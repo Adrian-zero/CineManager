@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineCatalog - Administración</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --bs-primary: #dc3545;
+            --bs-primary-rgb: 220, 53, 69;
+        }
+        
+        .bg-primary {
+            background-color: var(--bs-primary) !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+        
+        .text-primary {
+            color: var(--bs-primary) !important;
+        }
+        
+        .sidebar {
+            background-color: var(--bs-primary);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .admin-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .movie-poster-admin {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        
+        .btn {
+            border-radius: 10px;
+            padding: 8px 16px;
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            border: none;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--bs-primary) 0%, #e74c3c 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-0">
+                <div class="p-3">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-film display-5"></i>
+                        <h5 class="mt-2">CineCatalog</h5>
+                        <small class="opacity-75">Panel de Administración</small>
+                    </div>
+                    
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#peliculas">
+                            <i class="bi bi-collection-play me-2"></i> Películas
+                        </a>
+                        <a class="nav-link" href="#categorias">
+                            <i class="bi bi-tags me-2"></i> Categorías
+                        </a>
+                        <a class="nav-link" href="usuarios.html">
+                            <i class="bi bi-people me-2"></i> Usuarios
+                        </a>
+                        <a class="nav-link" href="#reportes">
+                            <i class="bi bi-graph-up me-2"></i> Reportes
+                        </a>
+                        <hr class="my-3">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-1">Administración de Películas</h2>
+                        <p class="text-muted mb-0">Gestiona el catálogo de películas</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddMovieModal()">
+                        <i class="bi bi-plus-circle me-2"></i>Agregar Película
+                    </button>
+                </div>
+
+                <!-- Movies Table -->
+                <div class="admin-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">
+                            <i class="bi bi-table me-2"></i>Lista de Películas
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control" placeholder="Buscar película..." id="searchMovie">
+                            <button class="btn btn-outline-primary" onclick="searchMovies()">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Poster</th>
+                                    <th>Título</th>
+                                    <th>Director</th>
+                                    <th>Año</th>
+                                    <th>Géneros</th>
+                                    <th>Calificación</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="moviesTableBody">
+                                <!-- Movies will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Movie Modal -->
+    <div class="modal fade" id="movieModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="movieModalTitle">
+                        <i class="bi bi-plus-circle me-2"></i>Agregar Nueva Película
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="movieForm">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-film me-2"></i>Título
+                                    </label>
+                                    <input type="text" class="form-control" id="movieTitle" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-person me-2"></i>Director
+                                    </label>
+                                    <input type="text" class="form-control" id="movieDirector" required>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">
+                                                <i class="bi bi-calendar me-2"></i>Año
+                                            </label>
+                                            <input type="number" class="form-control" id="movieYear" min="1900" max="2030" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">
+                                                <i class="bi bi-star me-2"></i>Calificación
+                                            </label>
+                                            <input type="number" class="form-control" id="movieRating" min="0" max="10" step="0.1" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-tags me-2"></i>Géneros
+                                    </label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="Acción" id="genreAccion">
+                                                <label class="form-check-label" for="genreAccion">Acción</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="Drama" id="genreDrama">
+                                                <label class="form-check-label" for="genreDrama">Drama</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="Comedia" id="genreComedia">
+                                                <label class="form-check-label" for="genreComedia">Comedia</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="Terror" id="genreTerror">
+                                                <label class="form-check-label" for="genreTerror">Terror</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="Ciencia Ficción" id="genreCienciaFiccion">
+                                                <label class="form-check-label" for="genreCienciaFiccion">Ciencia Ficción</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="Romance" id="genreRomance">
+                                                <label class="form-check-label" for="genreRomance">Romance</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-text-paragraph me-2"></i>Descripción
+                                    </label>
+                                    <textarea class="form-control" id="movieDescription" rows="3" required></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-image me-2"></i>Poster URL
+                                    </label>
+                                    <input type="url" class="form-control" id="moviePoster" required>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <img id="posterPreview" src="https://via.placeholder.com/200x300?text=Poster" 
+                                         class="img-fluid rounded" style="max-width: 200px;">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveMovie()">
+                        <i class="bi bi-check-circle me-2"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Eliminación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar la película "<span id="deleteMovieTitle"></span>"?</p>
+                    <p class="text-muted">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                        <i class="bi bi-trash me-2"></i>Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        let movies = [];
+        let currentMovieId = null;
+        let isEditing = false;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminAuth();
+            loadMovies();
+            setupEventListeners();
+        });
+
+        // Load movies into table
+        function loadMovies() {
+            const tbody = document.getElementById('moviesTableBody');
+            tbody.innerHTML = '';
+
+            movies.forEach(movie => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <img src="${movie.poster}" alt="${movie.title}" class="movie-poster-admin">
+                    </td>
+                    <td>
+                        <strong>${movie.title}</strong>
+                    </td>
+                    <td>${movie.director}</td>
+                    <td>${movie.year}</td>
+                    <td>
+                        ${movie.genre.map(genre => `<span class="badge bg-primary me-1">${genre}</span>`).join('')}
+                    </td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            <i class="bi bi-star-fill me-1"></i>${movie.rating}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editMovie(${movie.id})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMovie(${movie.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Poster preview
+            document.getElementById('moviePoster').addEventListener('input', function() {
+                const preview = document.getElementById('posterPreview');
+                preview.src = this.value || 'https://via.placeholder.com/200x300?text=Poster';
+            });
+
+            // Search functionality
+            document.getElementById('searchMovie').addEventListener('input', function() {
+                searchMovies();
+            });
+        }
+
+        // Open add movie modal
+        function openAddMovieModal() {
+            isEditing = false;
+            currentMovieId = null;
+            document.getElementById('movieModalTitle').innerHTML = '<i class="bi bi-plus-circle me-2"></i>Agregar Nueva Película';
+            document.getElementById('movieForm').reset();
+            document.getElementById('posterPreview').src = 'https://via.placeholder.com/200x300?text=Poster';
+            
+            const modal = new bootstrap.Modal(document.getElementById('movieModal'));
+            modal.show();
+        }
+
+        // Edit movie
+        function editMovie(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            isEditing = true;
+            currentMovieId = movieId;
+            
+            document.getElementById('movieModalTitle').innerHTML = '<i class="bi bi-pencil me-2"></i>Editar Película';
+            document.getElementById('movieTitle').value = movie.title;
+            document.getElementById('movieDirector').value = movie.director;
+            document.getElementById('movieYear').value = movie.year;
+            document.getElementById('movieRating').value = movie.rating;
+            document.getElementById('movieDescription').value = movie.description;
+            document.getElementById('moviePoster').value = movie.poster;
+            document.getElementById('posterPreview').src = movie.poster;
+
+            // Clear all checkboxes first
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            // Check the genres that the movie has
+            movie.genre.forEach(genre => {
+                const checkbox = document.getElementById(`genre${genre.replace(/\s+/g, '')}`);
+                if (checkbox) checkbox.checked = true;
+            });
+
+            const modal = new bootstrap.Modal(document.getElementById('movieModal'));
+            modal.show();
+        }
+
+        // Save movie (add or edit)
+        function saveMovie() {
+            const form = document.getElementById('movieForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const selectedGenres = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+
+            const movieData = {
+                title: document.getElementById('movieTitle').value,
+                director: document.getElementById('movieDirector').value,
+                year: parseInt(document.getElementById('movieYear').value),
+                rating: parseFloat(document.getElementById('movieRating').value),
+                description: document.getElementById('movieDescription').value,
+                poster: document.getElementById('moviePoster').value,
+                genre: selectedGenres
+            };
+
+            if (isEditing) {
+                // Update existing movie
+                const index = movies.findIndex(m => m.id === currentMovieId);
+                if (index !== -1) {
+                    movies[index] = { ...movies[index], ...movieData };
+                }
+            } else {
+                // Add new movie
+                const newId = Math.max(...movies.map(m => m.id)) + 1;
+                movies.push({
+                    id: newId,
+                    ...movieData
+                });
+            }
+
+            loadMovies();
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('movieModal'));
+            modal.hide();
+
+            // Show success message
+            Swal.fire({
+                title: isEditing ? '¡Película Actualizada!' : '¡Película Agregada!',
+                text: isEditing ? 'La película ha sido actualizada exitosamente' : 'La película ha sido agregada exitosamente',
+                icon: 'success',
+                confirmButtonText: '¡Perfecto!',
+                confirmButtonColor: '#dc3545',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+
+        // Delete movie
+        function deleteMovie(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Deseas eliminar "${movie.title}" del catálogo?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    confirmDelete(movieId);
+                }
+            });
+        }
+
+        // Confirm delete
+        function confirmDelete(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            movies = movies.filter(m => m.id !== movieId);
+            loadMovies();
+            
+            Swal.fire({
+                title: '¡Eliminada!',
+                text: `"${movie.title}" ha sido eliminada del catálogo`,
+                icon: 'success',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#dc3545',
+                timer: 3000,
+                timerProgressBar: true
+            });
+        }
+
+        // Search movies
+        function searchMovies() {
+            const searchTerm = document.getElementById('searchMovie').value.toLowerCase();
+            const tbody = document.getElementById('moviesTableBody');
+            tbody.innerHTML = '';
+
+            const filteredMovies = movies.filter(movie => 
+                movie.title.toLowerCase().includes(searchTerm) ||
+                movie.director.toLowerCase().includes(searchTerm) ||
+                movie.genre.some(genre => genre.toLowerCase().includes(searchTerm))
+            );
+
+            filteredMovies.forEach(movie => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <img src="${movie.poster}" alt="${movie.title}" class="movie-poster-admin">
+                    </td>
+                    <td>
+                        <strong>${movie.title}</strong>
+                    </td>
+                    <td>${movie.director}</td>
+                    <td>${movie.year}</td>
+                    <td>
+                        ${movie.genre.map(genre => `<span class="badge bg-primary me-1">${genre}</span>`).join('')}
+                    </td>
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            <i class="bi bi-star-fill me-1"></i>${movie.rating}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editMovie(${movie.id})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMovie(${movie.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Función de logout
+        function logout() {
+            Swal.fire({
+                title: '¿Cerrar sesión?',
+                text: '¿Estás seguro de que deseas cerrar sesión?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Limpiar sesión
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('isLoggedIn');
+                    Swal.fire({
+                        title: 'Sesión cerrada',
+                        text: 'Has cerrado sesión exitosamente',
+                        icon: 'success',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#dc3545',
+                        timer: 2000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        window.location.href = 'index.html';
+                    });
+                }
+            });
+        }
+
+        // Verificar autenticación y permisos de admin
+        function checkAdminAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (!isLoggedIn || !currentUser.email) {
+                Swal.fire({
+                    title: 'Acceso denegado',
+                    text: 'Debes iniciar sesión para acceder al panel de administración',
+                    icon: 'warning',
+                    confirmButtonText: 'Ir al login',
+                    confirmButtonColor: '#dc3545'
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+                return;
+            }
+            if (currentUser.role !== 'admin') {
+                Swal.fire({
+                    title: 'Permisos insuficientes',
+                    text: 'Solo los administradores pueden acceder a esta sección',
+                    icon: 'error',
+                    confirmButtonText: 'Volver al dashboard',
+                    confirmButtonColor: '#dc3545'
+                }).then(() => {
+                    window.location.href = 'dashboard.html';
+                });
+                return;
+            }
+            // Mostrar nombre del admin en el sidebar
+            const adminName = document.querySelector('.sidebar h5');
+            if (adminName) {
+                adminName.textContent = currentUser.name;
+            }
+        }
+    </script>
+</body>
+</html> 
