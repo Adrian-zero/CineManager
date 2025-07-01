@@ -309,14 +309,14 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
-        // Sample movie data
-        const movies = [];
-
+        // Reemplazar el array de películas por la lectura desde localStorage
+        let movies = [];
         let currentView = 'grid';
-        let filteredMovies = [...movies];
+        let filteredMovies = [];
 
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
+            movies = JSON.parse(localStorage.getItem('movies') || '[]');
+            filteredMovies = [...movies];
             displayMovies();
         });
 
@@ -324,7 +324,10 @@
         function displayMovies() {
             const moviesGrid = document.getElementById('moviesGrid');
             moviesGrid.innerHTML = '';
-
+            if (filteredMovies.length === 0) {
+                moviesGrid.innerHTML = '<div class="col-12 text-center text-muted py-5"><h4>No hay películas registradas</h4></div>';
+                return;
+            }
             filteredMovies.forEach(movie => {
                 const movieCard = createMovieCard(movie);
                 moviesGrid.appendChild(movieCard);
@@ -335,11 +338,11 @@
         function createMovieCard(movie) {
             const col = document.createElement('div');
             col.className = currentView === 'grid' ? 'col-md-6 col-lg-4 mb-4' : 'col-12 mb-4';
-            
+            const posterUrl = movie.poster && movie.poster.trim() !== '' ? movie.poster : 'img/placeholder_poster.png';
             col.innerHTML = `
                 <div class="card movie-card h-100">
                     <div class="position-relative">
-                        <img src="${movie.poster}" class="movie-poster" alt="${movie.title}">
+                        <img src="${posterUrl}" class="movie-poster" alt="${movie.title}">
                         <div class="movie-rating">
                             <i class="bi bi-star-fill text-warning me-1"></i>${movie.rating}
                         </div>
