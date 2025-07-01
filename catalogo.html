@@ -318,6 +318,15 @@
         let favoriteMovies = JSON.parse(localStorage.getItem('favoriteMovies') || '[]');
 
         document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const nav = document.querySelector('.navbar-nav');
+            if (isLoggedIn && currentUser.email) {
+                const loginBtn = document.querySelector('a[href="login.html"]');
+                if (loginBtn) loginBtn.remove();
+                const regBtn = document.querySelector('a[href="registro.html"]');
+                if (regBtn) regBtn.remove();
+            }
             movies = JSON.parse(localStorage.getItem('movies') || '[]');
             filteredMovies = [...movies];
             displayMovies();
